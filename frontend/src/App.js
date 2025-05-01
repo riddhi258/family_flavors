@@ -16,7 +16,7 @@ function App() {
       const resData = await res.json()
       dispatch(setDataProduct(resData))
       console.log(resData)
-    })()
+    })
   },[])
 
   console.log(productData)
