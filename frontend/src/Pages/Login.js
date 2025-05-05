@@ -36,12 +36,14 @@ const Login = () => {
 
     if (email && password) {
       try {
-        const fetchData = await fetch(`${process.env.REACT_APP_SERVER_DOMAIN}/login`, {
+        const SERVER_DOMAIN = process.env.REACT_APP_SERVER_DOMAIN;
+
+        fetch(`${SERVER_DOMAIN}/signup`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(data),
+          body: JSON.stringify({ ...yourSignupData }),
         });
 
         // Check if the request was successful
@@ -75,7 +77,11 @@ const Login = () => {
       <div className="w-full max-w-sm bg-white m-auto flex flex-col p-4">
         {/* <h1 className='text-center text-2xl font-bold'>Sign up</h1> */}
         <div className="w-20 overflow-hidden rounded-full drop-shadow-md shadow-md m-auto">
-          <img src={loginSignupImage} className="w-full" alt="Login Animation" />
+          <img
+            src={loginSignupImage}
+            className="w-full"
+            alt="Login Animation"
+          />
         </div>
 
         <form className="w-full py-3 flex flex-col" onSubmit={handleSubmit}>
@@ -109,9 +115,7 @@ const Login = () => {
             </span>
           </div>
 
-          <button
-            className="w-full max-w-[150px] m-auto bg-red-500 hover:bg-red-600 cursor-pointer text-white text-xl font-medium text-center py-1 rounded-full mt-4"
-          >
+          <button className="w-full max-w-[150px] m-auto bg-red-500 hover:bg-red-600 cursor-pointer text-white text-xl font-medium text-center py-1 rounded-full mt-4">
             Login
           </button>
         </form>
