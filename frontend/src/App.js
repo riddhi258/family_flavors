@@ -16,7 +16,7 @@ function App() {
     (async () => {
       try {
         // Corrected to GET request and /product endpoint
-        const response = await axios.get("https://family-flavors.vercel.app/product");
+        const response = await axios.get("https://family-flavors.vercel.app/");
         dispatch(setDataProduct(response.data));
         console.log("Fetched products:", response.data);
       } catch (error) {
