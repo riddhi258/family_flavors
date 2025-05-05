@@ -59,10 +59,10 @@ function Signup() {
     if (firstName && lastName && email && address) {
       try {
         // Load Stripe instance
-        const stripe = await loadStripe('pk_test_your_key');
+        const stripe = await loadStripe('pk_test_51Omf68SAfCDVKfdLRnCMrfBCrI6IoG3FIUJQvG1xmIzCfcN1xcgwUKJ72inN6l9P1ifnLRQMDwK8ZVraIkS8jmfN00LIIznM17');
   
         // Fetch create-checkout-session endpoint
-        const response = await fetch(`${process.env.REACT_APP_SERVER_DOMAIN}/create-checkout-session`, {
+        const response = await fetch(`${process.env.REACT_APP_SERVER_DOMAIN}/signup`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
