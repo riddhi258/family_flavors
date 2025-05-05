@@ -10,7 +10,7 @@ const app = express();
 
 // CORS Configuration
 app.use(cors({
-  origin: ['https://family-flavors-izrb.vercel.app'], // frontend domain
+  origin: [''], // frontend domain
   methods: ['GET', 'POST'],
   credentials: true
 }));
