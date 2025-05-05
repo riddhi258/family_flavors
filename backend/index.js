@@ -7,7 +7,7 @@ const Stripe = require("stripe");
 dotenv.config();
 const app = express();
 app.use(cors({
-  origin: ['https://family-flavors.vercel.app'],
+  origin: [''],
   methods: ['GET', 'POST'],
   credentials: true
 }));
