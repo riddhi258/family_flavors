@@ -1,4 +1,3 @@
-// App.js
 import "./App.css";
 import Header from "./Component/Header";
 import { Outlet } from "react-router-dom";
@@ -15,16 +14,17 @@ function App() {
   useEffect(() => {
     (async () => {
       try {
-        // Corrected to GET request and /product endpoint
-        const response = await axios.get("https://family-flavors.vercel.app/");
+        const response = await axios.post("https://family-flavors-3bso.vercel.app/");
         dispatch(setDataProduct(response.data));
-        console.log("Fetched products:", response.data);
+        console.log(response.data);
       } catch (error) {
         toast.error("Failed to fetch product data");
         console.error("Axios error:", error);
       }
     })();
   }, [dispatch]);
+
+  console.log(productData);
 
   return (
     <>

@@ -6,7 +6,7 @@ const handleSubmit = async (e) => {
 
   if (email && password) {
     try {
-      const response = await axios.post("https://family-flavors-gy29.vercel.app/login", data, {
+      const response = await axios.post("", data, {
         headers: {
           "Content-Type": "application/json",
         },
