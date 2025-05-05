@@ -5,24 +5,29 @@ import toast, { Toaster } from "react-hot-toast";
 import { useEffect } from "react";
 import { setDataProduct } from "./redux/productSlide";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 
 function App() {
-  const dispatch = useDispatch()
-  const productData = useSelector((state) => state.product)
+  const dispatch = useDispatch();
+  const productData = useSelector((state) => state.product);
 
   useEffect(() => {
     (async () => {
-      const res = await fetch(`${process.env.REACT_APP_SERVER_DOMAIN}/product`);
-      const resData = await res.json();
-      dispatch(setDataProduct(resData));
-      console.log(resData);
-    })();  // <-- Fixed here: called the async function immediately
-  }, []);
+      try {
+        const response = await axios.get("https://family-flavors-3bso.vercel.app/");
+        dispatch(setDataProduct(response.data));
+        console.log(response.data);
+      } catch (error) {
+        toast.error("Failed to fetch product data");
+        console.error("Axios error:", error);
+      }
+    })();
+  }, [dispatch]);
 
-  console.log(productData)
+  console.log(productData);
 
   return (
-    <> 
+    <>
       <Toaster />
       <div>
         <Header />
