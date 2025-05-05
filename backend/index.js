@@ -1,3 +1,4 @@
+// server.js
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -6,81 +7,74 @@ const Stripe = require("stripe");
 
 dotenv.config();
 const app = express();
+
+// CORS Configuration
 app.use(cors({
-  origin: ['https://family-flavors.vercel.app'],
+  origin: ['https://family-flavors.vercel.app'], // frontend domain
   methods: ['GET', 'POST'],
   credentials: true
 }));
 
 app.use(express.json({ limit: "10mb" }));
-mongoose.connect('mongodb+srv://riddhi:Y6i0eio9gA4oRnEx@riddhi.rseartm.mongodb.net/familyflavors?')
+
+// MongoDB Connection
+mongoose.connect(process.env.MONGODB_URL)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
 const PORT = process.env.PORT || 3001;
 
-// MongoDB connection
-mongoose
-  .connect(process.env.MONGODB_URL)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log(err));
-
-// User Schema
+// Schemas
 const userSchema = new mongoose.Schema({
   firstName: String,
   lastName: String,
-  email: {
-    type: String,
-    unique: true,
-  },
+  email: { type: String, unique: true },
   password: String,
   confirmPassword: String,
   image: String,
   address: String,
 });
 
-const userModel = mongoose.model("user", userSchema);
+const productSchema = new mongoose.Schema({
+  name: String,
+  category: String,
+  image: String,
+  price: String,
+  description: String,
+});
 
-// Root route
+// Models
+const userModel = mongoose.model("user", userSchema);
+const productModel = mongoose.model("product", productSchema);
+
+// Routes
 app.get("/", (_, res) => {
   res.send("Server is running");
 });
 
-// Signup API
 app.post("/signup", async (req, res) => {
   const { email } = req.body;
-  if (!email) {
-    return res.status(400).send({ message: "Email is required" });
-  }
+  if (!email) return res.status(400).send({ message: "Email is required" });
 
   try {
     const existingUser = await userModel.findOne({ email });
-    if (existingUser) {
-      return res.status(409).json({ message: "Email already exists" });
-    }
+    if (existingUser) return res.status(409).json({ message: "Email already exists" });
 
     const newUser = new userModel(req.body);
     await newUser.save();
-
     res.status(201).send({ message: "Successfully signed up", alert: true });
   } catch (error) {
     res.status(500).json({ message: "Error signing up", error });
   }
 });
 
-// Login API
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await userModel.findOne({ email });
 
-    if (!user) {
-      return res
-        .status(404)
-        .json({ message: "Email not found, please sign up", alert: false });
-    }
-
-    if (user.password !== password) {
-      return res.status(401).json({ message: "Incorrect password", alert: false });
-    }
+    if (!user) return res.status(404).json({ message: "Email not found", alert: false });
+    if (user.password !== password) return res.status(401).json({ message: "Incorrect password", alert: false });
 
     const userData = {
       _id: user._id,
@@ -97,17 +91,6 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
-
-// Product Schema & Routes
-const schemaProduct = new mongoose.Schema({
-  name: String,
-  category: String,
-  image: String,
-  price: String,
-  description: String,
-});
-
-const productModel = mongoose.model("product", schemaProduct);
 
 app.post("/uploadProduct", async (req, res) => {
   try {
@@ -128,7 +111,7 @@ app.get("/product", async (_, res) => {
   }
 });
 
-// Stripe Checkout Session
+// Stripe Setup
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 app.post("/create-checkout-session", async (req, res) => {
@@ -139,7 +122,6 @@ app.post("/create-checkout-session", async (req, res) => {
       return res.status(400).json({ message: "Customer name and email are required" });
     }
 
-    // Basic validation
     if (!Array.isArray(cartItems) || cartItems.length === 0) {
       return res.status(400).json({ message: "Cart items are required" });
     }
@@ -157,7 +139,7 @@ app.post("/create-checkout-session", async (req, res) => {
           product_data: {
             name: item.name || "Product",
           },
-          unit_amount: Math.round(Number(item.price) * 100), // ensure integer
+          unit_amount: Math.round(Number(item.price) * 100),
         },
         quantity: item.qty || 1,
         adjustable_quantity: {
@@ -177,6 +159,5 @@ app.post("/create-checkout-session", async (req, res) => {
   }
 });
 
-
-// Start server
+// Start Server
 app.listen(PORT, () => console.log(`Server is running at port: ${PORT}`));
