@@ -9,11 +9,7 @@ dotenv.config();
 const app = express();
 
 // CORS Configuration
-app.use(cors({
-  origin: [''], // frontend domain
-  methods: ['GET', 'POST'],
-  credentials: true
-}));
+app.use(cors());
 
 app.use(express.json({ limit: "10mb" }));
 
