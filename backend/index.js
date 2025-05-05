@@ -13,6 +13,7 @@ app.use(cors({
 }));
 
 app.use(express.json({ limit: "10mb" }));
+mongoose.connect('mongodb+srv://riddhi:Y6i0eio9gA4oRnEx@riddhi.rseartm.mongodb.net/familyflavors?')
 
 const PORT = process.env.PORT || 3001;
 
